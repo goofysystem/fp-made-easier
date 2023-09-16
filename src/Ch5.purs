@@ -1,6 +1,6 @@
 module Ch5 where
 
-import Prelude (Unit, show, discard)
+import Prelude (Unit, (+), show, discard)
 import Data.List (List(..), (:))
 
 import Effect (Effect)
@@ -33,10 +33,15 @@ snoc :: ∀ a. List a -> a -> List a
 snoc Nil x = singleton x
 snoc (y : ys) x = y : snoc ys x 
 
+length :: ∀ a. List a -> Int
+length Nil = 0
+length (_: xs) = 1 + length xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
   flip const 1 2 # show # log
   log $ show $ singleton "xyz"
   log $ show $ snoc (1 : 2 : Nil) 3
+  log $ show $ length $ 1 : 2 : 3 : Nil
 
