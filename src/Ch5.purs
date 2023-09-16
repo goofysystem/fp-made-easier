@@ -1,6 +1,7 @@
 module Ch5 where
 
-import Prelude (Unit, show, discard )
+import Prelude (Unit, show, discard)
+import Data.List (List(..), (:))
 
 import Effect (Effect)
 import Effect.Console (log)
@@ -21,8 +22,12 @@ applyFlipped = flip apply
 
 infixl 1 applyFlipped as #
 
+singleton :: ∀ a. a -> List a
+singleton x = x : Nil
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
   flip const 1 2 # show # log
+  log $ show $ singleton "xyz"
 
