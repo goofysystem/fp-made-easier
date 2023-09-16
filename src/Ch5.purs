@@ -25,6 +25,10 @@ infixl 1 applyFlipped as #
 singleton :: ∀ a. a -> List a
 singleton x = x : Nil
 
+null :: ∀ a. List a -> Boolean
+null Nil = true
+null _ = false
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
