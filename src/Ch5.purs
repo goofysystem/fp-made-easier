@@ -31,7 +31,7 @@ null _ = false
 
 snoc :: ∀ a. List a -> a -> List a
 snoc Nil x = singleton x
-snoc (y : ys) x = y : snoc ys x 
+snoc (y : ys) x = y : snoc ys x
 
 length :: ∀ a. List a -> Int
 length l = go 0 l
