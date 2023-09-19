@@ -1,6 +1,7 @@
 module Ch5 where
 
 import Prelude (Unit, (+), show, discard)
+import Data.Maybe (Maybe(..))
 import Data.List (List(..), (:))
 
 import Effect (Effect)
@@ -40,6 +41,10 @@ length l = go 0 l
   go acc Nil = acc
   go acc (_ : xs) = go (acc + 1) xs
 
+head :: ∀ a. List a -> Maybe a
+head Nil = Nothing
+head (x : _) = Just x
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -47,4 +52,6 @@ test = do
   log $ show $ singleton "xyz"
   log $ show $ snoc (1 : 2 : Nil) 3
   log $ show $ length $ 1 : 2 : 3 : Nil
+  log $ show $ (head Nil :: Maybe Unit)
+  log $ show $ head ("abc" : "123" : Nil)
 
