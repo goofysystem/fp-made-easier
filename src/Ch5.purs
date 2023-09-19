@@ -45,6 +45,10 @@ head :: ∀ a. List a -> Maybe a
 head Nil = Nothing
 head (x : _) = Just x
 
+tail :: ∀ a. List a -> Maybe (List a)  
+tail Nil = Nothing
+tail (_ : xs) = Just xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -54,4 +58,6 @@ test = do
   log $ show $ length $ 1 : 2 : 3 : Nil
   log $ show $ (head Nil :: Maybe Unit)
   log $ show $ head ("abc" : "123" : Nil)
+  log $ show $ (tail Nil :: Maybe (List Unit))
+  log $ show $ tail ("abc" : "123" : Nil)
 
