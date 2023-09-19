@@ -1,6 +1,6 @@
 module Ch5 where
 
-import Prelude (Unit, (+), show, discard)
+import Prelude (Unit, (+), (==), show, discard)
 import Data.Maybe (Maybe(..))
 import Data.List (List(..), (:))
 
@@ -49,6 +49,11 @@ tail :: ∀ a. List a -> Maybe (List a)
 tail Nil = Nothing
 tail (_ : xs) = Just xs
 
+last :: ∀ a. List a -> Maybe a
+last Nil = Nothing
+last (x: Nil) = Just x
+last (_: xs) = last xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -60,4 +65,6 @@ test = do
   log $ show $ head ("abc" : "123" : Nil)
   log $ show $ (tail Nil :: Maybe (List Unit))
   log $ show $ tail ("abc" : "123" : Nil)
+  log $ show $ (last Nil :: Maybe Unit)
+  log $ show $ last ("a" : "b" : "c" : Nil)
 
