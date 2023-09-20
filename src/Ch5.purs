@@ -1,11 +1,11 @@
 module Ch5 where
 
-import Prelude (Unit, (+), (==), show, discard)
-import Data.Maybe (Maybe(..))
 import Data.List (List(..), (:))
-
+import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
+import Prelude (Unit, (+), (==), show, discard)
+import Prim.RowList (Nil)
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -45,14 +45,22 @@ head :: ∀ a. List a -> Maybe a
 head Nil = Nothing
 head (x : _) = Just x
 
-tail :: ∀ a. List a -> Maybe (List a)  
+tail :: ∀ a. List a -> Maybe (List a)
 tail Nil = Nothing
 tail (_ : xs) = Just xs
 
 last :: ∀ a. List a -> Maybe a
 last Nil = Nothing
-last (x: Nil) = Just x
-last (_: xs) = last xs
+last (x : Nil) = Just x
+last (_ : xs) = last xs
+
+init :: ∀ a. List a -> Maybe (List a)
+init Nil = Nothing
+init l = Just $ go l
+  where
+  go Nil = Nil
+  go (_ : Nil) = Nil
+  go (x : xs) = x : go xs
 
 test :: Effect Unit
 test = do
@@ -67,4 +75,8 @@ test = do
   log $ show $ tail ("abc" : "123" : Nil)
   log $ show $ (last Nil :: Maybe Unit)
   log $ show $ last ("a" : "b" : "c" : Nil)
+  log $ show $ (init Nil :: Maybe (List Unit))
+  log $ show $ init (1 : Nil)
+  log $ show $ init (1 : 2 : Nil)
+  log $ show $ init (1 : 2 : 3 : Nil)
 
