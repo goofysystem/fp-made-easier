@@ -4,7 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (-), (<), show, negate, discard)
+import Prelude (Unit, (+), (-), (<), (>=), (/=), show, negate, discard)
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -73,6 +73,13 @@ index (_ : xs) i = index xs (i - 1)
 
 infixl 8 index as !!
 
+findIndex :: ∀ a. (a -> Boolean) -> List a -> Maybe Int
+-- findIndex _ Nil = Nothing   // go handles this case
+findIndex pred l = go 0 l
+  where
+  go _ Nil = Nothing
+  go i (x : xs) = if pred x then Just i else go (i + 1) xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -96,4 +103,7 @@ test = do
   log $ show $ index (Nil :: List Unit) 0
   log $ show $ index (1 : 2 : 3 : Nil) (-99)
   log $ show $ (1 : 2 : 3 : Nil) !! 1
+  log $ show $ findIndex (_ >= 2) (1 : 2 : 3 : Nil)
+  log $ show $ findIndex (_ >= 99) (1 : 2 : 3 : Nil)
+  log $ show $ findIndex (10 /= _) (Nil :: List Int)
 
