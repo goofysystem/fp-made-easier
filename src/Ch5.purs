@@ -81,9 +81,10 @@ findIndex pred l = go 0 l
   go i (x : xs) = if pred x then Just i else go (i + 1) xs
 
 findLastIndex :: ∀ a. (a -> Boolean) -> List a -> Maybe Int
-findLastIndex _ Nil = Nothing
+-- findLastIndex _ Nil = Nothing
 findLastIndex pred l = go Nothing 0 l
   where
+  go :: Maybe Int -> Int -> List a -> Maybe Int
   go fi _ Nil = fi
   go fi i (x : xs) = go (if pred x then Just i else fi) (i + 1) xs
 
