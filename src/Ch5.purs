@@ -4,8 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (==), show, discard)
-import Prim.RowList (Nil)
+import Prelude (Unit, (+), (-), (<), show, negate, discard)
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -66,6 +65,12 @@ uncons :: ∀ a. List a -> Maybe { head :: a, tail :: List a }
 uncons Nil = Nothing
 uncons (x : xs) = Just { head: x, tail: xs }
 
+index :: ∀ a. List a -> Int -> Maybe a
+index Nil _ = Nothing
+index _ i | i < 0 = Nothing
+index (x : _) 0 = Just x
+index (_ : xs) i = index xs (i - 1)
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -84,4 +89,8 @@ test = do
   log $ show $ init (1 : 2 : Nil)
   log $ show $ init (1 : 2 : 3 : Nil)
   log $ show $ uncons (1 : 2 : 3 : Nil)
+  log $ show $ index (1 : Nil) 4
+  log $ show $ index (1 : 2 : 3 : Nil) 1
+  log $ show $ index (Nil :: List Unit) 0
+  log $ show $ index (1 : 2 : 3 : Nil) (-99)
 
