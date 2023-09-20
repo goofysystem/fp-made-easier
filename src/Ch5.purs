@@ -71,6 +71,8 @@ index _ i | i < 0 = Nothing
 index (x : _) 0 = Just x
 index (_ : xs) i = index xs (i - 1)
 
+infixl 8 index as !!
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -93,4 +95,5 @@ test = do
   log $ show $ index (1 : 2 : 3 : Nil) 1
   log $ show $ index (Nil :: List Unit) 0
   log $ show $ index (1 : 2 : 3 : Nil) (-99)
+  log $ show $ (1 : 2 : 3 : Nil) !! 1
 
