@@ -106,6 +106,12 @@ filter pred = reverse <<< go Nil
   go nl Nil = nl
   go nl (x : xs) = if pred x then go (x : nl) xs else go nl xs
 
+catMaybes :: ∀ a. List (Maybe a) -> List a
+catMaybes Nil = Nil
+catMaybes (x : xs) = case x of
+  Just y -> y : catMaybes xs
+  Nothing -> catMaybes xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -138,4 +144,5 @@ test = do
   log $ show $ reverse (10 : 20 : 30 : Nil)
   log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
   log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+  log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
 
