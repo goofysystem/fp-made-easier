@@ -4,7 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (-), (<), (>=), (/=), (==), show, negate, discard, type (~>))
+import Prelude (Unit, (+), (-), (<), (>), (>=), (/=), (==), show, negate, discard, type (~>))
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -100,6 +100,10 @@ concat Nil = Nil
 concat (Nil : xss) = concat (xss)
 concat ((x : xs) : xss) = x : concat (xs : xss)
 
+filter :: ∀ a. (a -> Boolean) -> List a -> List a
+filter _ Nil = Nil
+filter pred (x : xs) = if pred x then x : filter pred xs else filter pred xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -131,4 +135,5 @@ test = do
   log $ show $ findLastIndex (_ == 10) (11 : 12 : Nil)
   log $ show $ reverse (10 : 20 : 30 : Nil)
   log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
+  log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
 
