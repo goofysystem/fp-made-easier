@@ -95,6 +95,11 @@ reverse ol = go Nil ol
   go rl Nil = rl
   go rl (x : xs) = go (x : rl) xs
 
+concat :: ∀ a. List (List a) -> List a
+concat Nil = Nil
+concat (Nil : xss) = concat (xss)
+concat ((x : xs) : xss) = x : concat (xs : xss)
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -125,4 +130,5 @@ test = do
   log $ show $ findLastIndex (_ == 10) (10 : 5 : 10 : -1 : 2 : 10 : Nil)
   log $ show $ findLastIndex (_ == 10) (11 : 12 : Nil)
   log $ show $ reverse (10 : 20 : 30 : Nil)
+  log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
 
