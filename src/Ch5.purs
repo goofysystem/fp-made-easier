@@ -113,10 +113,12 @@ catMaybes (x : xs) = case x of
   Nothing -> catMaybes xs
 
 range :: Int -> Int -> List Int
-range start end
-  | start == end = singleton start
-  | otherwise =
-      start : range (start + if start < end then 1 else (-1)) end
+range start end = go Nil end start
+  where
+  go rl start' end'
+    | start' == end' = start' : rl
+    | otherwise = go (start' : rl) (start' + step) end'
+  step = if start < end then (-1) else 1
 
 test :: Effect Unit
 test = do
