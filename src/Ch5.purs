@@ -4,7 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (-), (<), (>), (>=), (/=), (==), (<<<), show, negate, discard, type (~>))
+import Prelude (Unit, (+), (-), (<), (>), (>=), (/=), (==), (<<<), show, negate, discard, otherwise, type (~>))
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -112,6 +112,12 @@ catMaybes (x : xs) = case x of
   Just y -> y : catMaybes xs
   Nothing -> catMaybes xs
 
+range :: Int -> Int -> List Int
+range start end
+  | start == end = singleton start
+  | otherwise =
+      start : range (start + if start < end then 1 else (-1)) end
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -145,4 +151,6 @@ test = do
   log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
   log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
+  log $ show $ range 1 10
+  log $ show $ range 3 (-3)
 
