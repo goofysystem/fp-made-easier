@@ -4,7 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (-), (<), (>=), (/=), (==), show, negate, discard)
+import Prelude (Unit, (+), (-), (<), (>=), (/=), (==), show, negate, discard, type (~>))
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -88,6 +88,13 @@ findLastIndex pred l = go Nothing 0 l
   go fi _ Nil = fi
   go fi i (x : xs) = go (if pred x then Just i else fi) (i + 1) xs
 
+reverse :: List ~> List
+reverse Nil = Nil
+reverse ol = go Nil ol
+  where
+  go rl Nil = rl
+  go rl (x : xs) = go (x : rl) xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -117,4 +124,5 @@ test = do
   log $ show $ findLastIndex (_ == 10) (Nil :: List Int)
   log $ show $ findLastIndex (_ == 10) (10 : 5 : 10 : -1 : 2 : 10 : Nil)
   log $ show $ findLastIndex (_ == 10) (11 : 12 : Nil)
+  log $ show $ reverse (10 : 20 : 30 : Nil)
 
