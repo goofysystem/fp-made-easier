@@ -155,6 +155,11 @@ dropEnd n = go >>> snd
   go (x : xs) = go xs
     # \(Tuple c nl) -> Tuple (c + 1) $ if c < n then nl else x : nl
 
+zip :: ∀ a b. List a -> List b -> List (Tuple a b)
+zip _ Nil = Nil
+zip Nil _ = Nil
+zip (x : xs) (y : ys) = Tuple x y : zip xs ys
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -202,4 +207,7 @@ test = do
   log $ show $ takeEnd 10 (1 : Nil)
   log $ show $ dropEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log $ show $ dropEnd 10 (1 : Nil)
+  log $ show $ zip (1 : 2 : 3 : Nil) ("a" : "b" : "c" : "d" : "e" : Nil)
+  log $ show $ zip ("a" : "b" : "c" : "d" : "e" : Nil) (1 : 2 : 3 : Nil)
+  log $ show $ zip (Nil :: List Unit) (1 : 2 : Nil)
 
