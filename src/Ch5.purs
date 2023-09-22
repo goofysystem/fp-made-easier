@@ -127,6 +127,11 @@ take n = reverse <<< go Nil (max 0 n)
   go nl 0 _ = nl
   go nl n' (x : xs) = go (x : nl) (n' - 1) xs
 
+drop :: ∀ a. Int -> List a -> List a
+drop _ Nil = Nil
+drop 0 l = l
+drop n (_ : xs) = drop (max 0 n - 1) xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -164,4 +169,6 @@ test = do
   log $ show $ range 3 (-3)
   log $ show $ take 5 (12 : 13 : 14 : Nil)
   log $ show $ take 5 (-7 : 9 : 0 : 12 : -13 : 45 : 976 : -19 : Nil)
+  log $ show $ drop 2 (1 : 2 : 3 : 4 : 5 : 6 : 7 : Nil)
+  log $ show $ drop 10 (Nil :: List Unit)
 
