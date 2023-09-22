@@ -120,6 +120,11 @@ range start end = go Nil end start
     | otherwise = go (start' : rl) (start' + step) end'
   step = if start < end then (-1) else 1
 
+take :: ∀ a. Int -> List a -> List a
+take 0 _ = Nil
+take _ Nil = Nil
+take n (x : xs) = x : take (n - 1)  xs
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -155,4 +160,6 @@ test = do
   log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
   log $ show $ range 1 10
   log $ show $ range 3 (-3)
+  log $ show $ take 5 (12 : 13 : 14 : Nil)
+  log $ show $ take 5 (-7 : 9 : 0 : 12 : -13 : 45 : 976 : -19 : Nil)
 
