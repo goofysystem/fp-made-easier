@@ -148,6 +148,13 @@ takeEnd n = go >>> snd
   go (x : xs) = go xs
     # \(Tuple c nl) -> Tuple (c + 1) $ if c < n then x : nl else nl
 
+dropEnd :: ∀ a. Int -> List a -> List a
+dropEnd n = go >>> snd
+  where
+  go Nil = Tuple 0 Nil
+  go (x : xs) = go xs
+    # \(Tuple c nl) -> Tuple (c + 1) $ if c < n then nl else x : nl
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -193,4 +200,6 @@ test = do
   log $ show $ dropWhile (_ == -17) (1 : 2 : 3 : Nil)
   log $ show $ takeEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log $ show $ takeEnd 10 (1 : Nil)
+  log $ show $ dropEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+  log $ show $ dropEnd 10 (1 : Nil)
 
