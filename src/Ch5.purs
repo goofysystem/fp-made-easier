@@ -132,6 +132,10 @@ drop _ Nil = Nil
 drop 0 l = l
 drop n (_ : xs) = drop (max 0 n - 1) xs
 
+takeWhile :: ∀ a. (a -> Boolean) -> List a -> List a
+takeWhile _ Nil = Nil
+takeWhile pred (x : xs) = if (pred x) then x : takeWhile pred xs else Nil
+
 test :: Effect Unit
 test = do
   log $ show $ flip const 1 2
@@ -171,4 +175,6 @@ test = do
   log $ show $ take 5 (-7 : 9 : 0 : 12 : -13 : 45 : 976 : -19 : Nil)
   log $ show $ drop 2 (1 : 2 : 3 : 4 : 5 : 6 : 7 : Nil)
   log $ show $ drop 10 (Nil :: List Unit)
+  log $ show $ takeWhile (_ > 3) (5 : 4 : 3 : 99 : 101 : Nil)
+  log $ show $ takeWhile (_ == -17) (1 : 2 : 3 : Nil)
 
