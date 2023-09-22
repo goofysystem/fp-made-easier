@@ -4,7 +4,7 @@ import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, (+), (-), (<), (>), (>=), (/=), (==), (<<<), show, negate, discard, otherwise, type (~>))
+import Prelude (Unit, (+), (-), (<), (>), (>=), (/=), (==), (<<<), show, negate, discard, otherwise, max, type (~>))
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
 flip f x y = f y x
@@ -121,9 +121,11 @@ range start end = go Nil end start
   step = if start < end then (-1) else 1
 
 take :: ∀ a. Int -> List a -> List a
-take 0 _ = Nil
-take _ Nil = Nil
-take n (x : xs) = x : take (n - 1)  xs
+take n = reverse <<< go Nil (max 0 n)
+  where
+  go nl _ Nil = nl
+  go nl 0 _ = nl
+  go nl n' (x : xs) = go (x : nl) (n' - 1) xs
 
 test :: Effect Unit
 test = do
