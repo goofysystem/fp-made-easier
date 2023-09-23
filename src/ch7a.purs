@@ -1,6 +1,6 @@
 module Ch7a where
 
-import Prelude (Unit, show, discard, (==), ($), (<), (>), (<=), (>=))
+import Prelude (Unit, show, discard, (==), ($), (<), (>), (<=), (||))
 
 import Data.Eq (class Eq)
 import Data.Ord (class Ord, Ordering(..), compare)
@@ -19,6 +19,13 @@ instance ordMaybe :: Ord a => Ord (Maybe a) where
   compare (Just x) (Just y) = compare x y
   compare Nothing _ = LT
   compare _ Nothing = GT
+
+greaterThanOrEq :: ∀ a. Ord a => a -> a -> Boolean
+greaterThanOrEq x y = cmp == GT || cmp == EQ
+  where
+  cmp = compare x y
+
+infixl 4 greaterThanOrEq as >=
 
 test :: Effect Unit
 test = do
