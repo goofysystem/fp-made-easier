@@ -1,5 +1,9 @@
 module Ch6 where
 
+import Data.Eq
+import Data.Newtype (class Newtype, unwrap)
+import Prelude (($))
+
 type Address =
   { street1 :: String
   , street2 :: String
@@ -8,7 +12,7 @@ type Address =
   , zip :: String
   }
 
-data Person = Person
+newtype Person = Person
   { name :: String
   , age :: Int
   , address :: Address
@@ -43,3 +47,25 @@ instance hasAddressResidence :: HasAddress Residence where
 instance hasAddressEmptyLot :: HasAddress EmptyLot where
   getAddress (EmptyLot l) = l.address
 
+newtype FirstName = FirstName String
+
+derive instance newTypeFirstName :: Newtype FirstName _
+derive instance eqFirstName :: Eq FirstName
+
+newtype Ceo = Ceo Person
+
+derive instance newtypeCeo :: Newtype Ceo _
+
+newtype Janitor = Janitor Person
+
+derive instance newtypeJanitor :: Newtype Janitor _
+
+genericPersonHasAddress :: ∀ a. Newtype a Person => a -> Address
+genericPersonHasAddress wrappedPerson =
+  getAddress $ unwrap wrappedPerson
+
+instance hasAddressCeo :: HasAddress Ceo where
+  getAddress = genericPersonHasAddress
+
+instance hasAddressJanitor :: HasAddress Janitor where
+  getAddress = genericPersonHasAddress
