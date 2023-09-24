@@ -11,6 +11,9 @@ import Effect.Console (log)
 
 newtype CSV = CSV String
 
+derive instance newtypeCSV :: Newtype CSV _
+derive newtype instance eqCSV :: Eq CSV
+
 class ToCSV a where
   toCSV :: a -> CSV
 
@@ -42,4 +45,4 @@ instance toCSVPerson :: ToCSV Person where
 
 test :: Effect Unit
 test = do
-  log "placeholder"
+  log $ show $ toCSV (Person { name: FullName "Sue Smith", age: Age 23, occupation: Doctor }) == CSV "Sue Smith,23,Doctor"
