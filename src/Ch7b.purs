@@ -15,6 +15,7 @@ newtype CSV = CSV String
 
 derive instance newtypeCSV :: Newtype CSV _
 derive newtype instance eqCSV :: Eq CSV
+derive newtype instance showCSV :: Show CSV
 
 class ToCSV a where
   toCSV :: a -> CSV
@@ -45,6 +46,8 @@ toOccupation = case _ of
 
 newtype FullName = FullName String
 
+derive instance newtypeFullName :: Newtype FullName _
+derive newtype instance eqFullName :: Eq FullName
 instance showFullName :: Show FullName where
   show (FullName name) = name
 
@@ -52,6 +55,7 @@ newtype Age = Age Int
 
 derive instance newTypeAge :: Newtype Age _
 derive newtype instance showAge :: Show Age
+derive newtype instance eqAge :: Eq Age
 
 data Occupation = Doctor | Dentist | Lawyer | Unemployed
 
@@ -60,15 +64,27 @@ derive instance genericOccupation :: Generic Occupation _
 instance showOccupation :: Show Occupation where
   show = genericShow
 
+derive instance eqOccupation :: Eq Occupation
+
 data Person = Person
   { name :: FullName
   , age :: Age
   , occupation :: Occupation
   }
 
+derive instance eqPerson :: Eq Person
+
 instance toCSVPerson :: ToCSV Person where
   toCSV (Person { name, age, occupation }) = CSV $ show name <> "," <> show age <> "," <> show occupation
 
 test :: Effect Unit
 test = do
+  log $ show $ toCSV (Person { name: FullName "Sue Smith", age: Age 23, occupation: Doctor })
   log $ show $ toCSV (Person { name: FullName "Sue Smith", age: Age 23, occupation: Doctor }) == CSV "Sue Smith,23,Doctor"
+  let
+    person = Person
+      { name: FullName "Sue Smith"
+      , age: Age 23
+      , occupation: Doctor
+      }
+  log $ show $ (toCSV person # fromCSV) == Just person
