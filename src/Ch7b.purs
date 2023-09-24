@@ -2,10 +2,12 @@ module Ch7b where
 
 import Prelude
 
-import Data.Newtype (class Newtype)
 import Data.Generic.Rep (class Generic)
+import Data.Int (fromString)
+import Data.Maybe (Maybe(..))
+import Data.Newtype (class Newtype, wrap)
 import Data.Show.Generic (genericShow)
-
+import Data.String (Pattern(..), split)
 import Effect (Effect)
 import Effect.Console (log)
 
@@ -16,6 +18,30 @@ derive newtype instance eqCSV :: Eq CSV
 
 class ToCSV a where
   toCSV :: a -> CSV
+
+class FromCSV a where
+  fromCSV :: CSV -> Maybe a
+
+instance fromCSVPerson :: FromCSV Person where
+  fromCSV (CSV str) = case split (Pattern ",") str of
+    [ name, age, occupation ] -> case fromString age of
+      Just age' -> case toOccupation occupation of
+        Just occupation' -> Just $ Person
+          { name: FullName name
+          , age: Age age'
+          , occupation: occupation'
+          }
+        Nothing -> Nothing
+      Nothing -> Nothing
+    _ -> Nothing
+
+toOccupation :: String -> Maybe Occupation
+toOccupation = case _ of
+  "Doctor" -> Just Doctor
+  "Dentist" -> Just Dentist
+  "Lawyer" -> Just Lawyer
+  "Unemployed" -> Just Unemployed
+  _ -> Nothing
 
 newtype FullName = FullName String
 
