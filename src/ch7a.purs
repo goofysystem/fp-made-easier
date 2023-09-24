@@ -44,6 +44,15 @@ derive instance genericMaybe :: Generic (Maybe a) _
 instance showMaybe :: Show a => Show (Maybe a) where
   show = genericShow
 
+data Either a b = Left a | Right b
+
+derive instance eqEither :: (Eq a, Eq b) => Eq (Either a b)
+derive instance ordEither :: (Ord a, Ord b) => Ord (Either a b)
+derive instance genericEither :: Generic (Either a b) _
+
+instance showEither :: (Show a, Show b) => Show (Either a b) where
+  show = genericShow
+
 test :: Effect Unit
 test = do
   log $ show $ Just 5 == Just 5
@@ -60,4 +69,6 @@ test = do
   log $ show $ Just 99 < Nothing
   log $ show $ Just "abc"
   log $ show $ (Nothing :: Maybe Unit)
+  log $ show $ (Left "left" :: Either _ Unit)
+  log $ show $ (Right (Just 42) :: Either Unit _)
 
