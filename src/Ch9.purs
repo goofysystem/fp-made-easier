@@ -110,6 +110,11 @@ verifyMod4Semigroup = do
   log "verifying Mod4 semigroup laws (1)"
   log $ show $ (One <> Two) <> Three == One <> (Two <> Three)
 
+verifyMod4Monoid :: Effect Unit
+verifyMod4Monoid = do
+  log "verifying Mod4 monoid laws (1)"
+  log $ show $ mempty <> One == One <> mempty && One <> mempty == One
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
@@ -122,3 +127,4 @@ test = do
   verifyOrBoolSemigroup
   verifyOrBoolMonoid
   verifyMod4Semigroup
+  verifyMod4Monoid
