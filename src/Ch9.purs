@@ -10,6 +10,9 @@ class Semigroup a where
 
 infixr 5 append as <>
 
+class Semigroup a <= Monoid a where
+  mempty :: a
+
 test :: Effect Unit
 test = do
   log "placeholder"
