@@ -43,6 +43,21 @@ verifyAndBoolMonoid = do
   log $ show $ mempty <> ATrue == ATrue <> mempty && ATrue <> mempty == ATrue
   log $ show $ mempty <> AFalse == AFalse <> mempty && AFalse <> mempty == AFalse
 
+data OrBool = OFalse | OTrue
+
+derive instance eqOrBool :: Eq OrBool
+derive instance genericOrBool :: Generic OrBool _
+
+instance showOrBool :: Show OrBool where
+  show = genericShow
+
+instance semigroupOrBool :: Semigroup OrBool where
+  append OFalse OFalse = OFalse
+  append _ _ = OTrue
+
+instance monoidOrBool :: Monoid OrBool where
+  mempty = OFalse
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
