@@ -74,6 +74,12 @@ verifyOrBoolMonoid = do
 
 data Mod4 = Zero | One | Two | Three
 
+derive instance eqMod4 :: Eq Mod4
+derive instance genericMod4 :: Generic Mod4 _
+
+instance showMod4 :: Show Mod4 where
+  show = genericShow
+
 instance semigroupMod4 :: Semigroup Mod4 where
   append Zero x = x
   append x Zero = x
