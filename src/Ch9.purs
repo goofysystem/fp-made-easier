@@ -32,6 +32,11 @@ instance semigroupAndBool :: Semigroup AndBool where
 instance monoidAndBool :: Monoid AndBool where
   mempty = ATrue
 
+verifyAndBoolSemigroup :: Effect Unit
+verifyAndBoolSemigroup = do
+  log "verifying AndBool Semigroup Laws (1)"
+  log $ show $ (AFalse <> ATrue) <> ATrue == AFalse <> (ATrue <> ATrue)
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
@@ -39,3 +44,4 @@ test = do
   log $ show $ AFalse <> AFalse
   log $ show $ mempty <> ATrue == ATrue
   log $ show $ mempty <> AFalse == ATrue
+  verifyAndBoolSemigroup
