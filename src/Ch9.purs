@@ -58,6 +58,17 @@ instance semigroupOrBool :: Semigroup OrBool where
 instance monoidOrBool :: Monoid OrBool where
   mempty = OFalse
 
+verifyOrBoolSemigroup :: Effect Unit
+verifyOrBoolSemigroup = do
+  log "verifying OrBool Semigroup Laws (1 test)"
+  log $ show $ (OFalse <> OTrue) <> OTrue == OFalse <> (OTrue <> OTrue)
+
+verifyOrBoolMonoid :: Effect Unit
+verifyOrBoolMonoid = do
+  log "verifying OrBool Monoid Laws (2 test)"
+  log $ show $ mempty <> OTrue == OTrue <> mempty && OTrue <> mempty == OTrue
+  log $ show $ mempty <> OFalse == OFalse <> mempty && OFalse <> mempty == OFalse
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
@@ -67,3 +78,5 @@ test = do
   log $ show $ mempty <> AFalse == ATrue
   verifyAndBoolSemigroup
   verifyAndBoolMonoid
+  verifyOrBoolSemigroup
+  verifyOrBoolMonoid
