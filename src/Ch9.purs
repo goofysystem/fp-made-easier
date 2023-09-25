@@ -1,6 +1,6 @@
 module Ch9 where
 
-import Prelude (Unit, class Show, class Eq, ($), discard, show)
+import Prelude (Unit, class Show, class Eq, ($), (==), discard, show)
 
 import Effect (Effect)
 import Effect.Console (log)
@@ -29,9 +29,13 @@ instance semigroupAndBool :: Semigroup AndBool where
   append _ AFalse = AFalse
   append AFalse _ = AFalse
 
+instance monoidAndBool :: Monoid AndBool where
+  mempty = ATrue
 
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
   log $ show $ ATrue <> AFalse
   log $ show $ AFalse <> AFalse
+  log $ show $ mempty <> ATrue == ATrue
+  log $ show $ mempty <> AFalse == ATrue
