@@ -105,6 +105,11 @@ instance groupMod4 :: Group Mod4 where
   ginverse Two = Two
   ginverse Three = One
 
+verifyMod4Semigroup :: Effect Unit
+verifyMod4Semigroup = do
+  log "verifying Mod4 semigroup laws (1)"
+  log $ show $ (One <> Two) <> Three == One <> (Two <> Three)
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
@@ -116,3 +121,4 @@ test = do
   verifyAndBoolMonoid
   verifyOrBoolSemigroup
   verifyOrBoolMonoid
+  verifyMod4Semigroup
