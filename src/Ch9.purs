@@ -118,12 +118,31 @@ verifyMod4Monoid = do
 
 newtype First a = First (Maybe a)
 
+derive instance genericFirst :: Generic (First a) _
+
+instance showFirst :: Show a => Show (First a) where
+  show = genericShow
+
 instance semigroupFirst :: Semigroup (First a) where
   append (First Nothing) last = last
   append first _ = first
 
 instance monoidFirst :: Monoid (First a) where
   mempty = First Nothing
+
+newtype Last a = Last (Maybe a)
+
+derive instance genericLast :: Generic (Last a) _
+
+instance showLast :: Show a => Show (Last a) where
+  show = genericShow
+
+instance semigroupLast :: Semigroup (Last a) where
+  append first (Last Nothing) = first
+  append _ last = last
+
+instance monoidLast :: Monoid (Last a) where
+  mempty = Last Nothing
 
 test :: Effect Unit
 test = do
@@ -138,3 +157,5 @@ test = do
   verifyOrBoolMonoid
   verifyMod4Semigroup
   verifyMod4Monoid
+  log $ show $ First Nothing <> First (Just 77)
+  log $ show $ Last (Just 1) <> Last (Just 99)
