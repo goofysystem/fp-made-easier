@@ -87,6 +87,9 @@ instance semigroupMod4 :: Semigroup Mod4 where
   append Three Two = One
   append Three Three = Two
 
+instance monoidMod4 :: Monoid Mod4 where
+  mempty = Zero
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
