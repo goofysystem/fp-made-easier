@@ -1,6 +1,6 @@
 module Ch9 where
 
-import Prelude (Unit, class Show, class Eq, ($), (==), discard, show)
+import Prelude (Unit, class Show, class Eq, ($), (==), (&&), discard, show)
 
 import Effect (Effect)
 import Effect.Console (log)
@@ -37,6 +37,12 @@ verifyAndBoolSemigroup = do
   log "verifying AndBool Semigroup Laws (1)"
   log $ show $ (AFalse <> ATrue) <> ATrue == AFalse <> (ATrue <> ATrue)
 
+verifyAndBoolMonoid :: Effect Unit
+verifyAndBoolMonoid = do
+  log "verifying AndBool Monoid Laws (2)"
+  log $ show $ mempty <> ATrue == ATrue <> mempty && ATrue <> mempty == ATrue
+  log $ show $ mempty <> AFalse == AFalse <> mempty && AFalse <> mempty == AFalse
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
@@ -45,3 +51,4 @@ test = do
   log $ show $ mempty <> ATrue == ATrue
   log $ show $ mempty <> AFalse == ATrue
   verifyAndBoolSemigroup
+  verifyAndBoolMonoid
