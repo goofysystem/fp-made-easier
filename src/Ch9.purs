@@ -71,6 +71,22 @@ verifyOrBoolMonoid = do
 
 data Mod4 = Zero | One | Two | Three
 
+instance semigroupMod4 :: Semigroup Mod4 where
+  append Zero x = x
+  append x Zero = x
+
+  append One One = Two
+  append One Two = Three
+  append One Three = Zero
+
+  append Two One = Three
+  append Two Two = Zero
+  append Two Three = One
+
+  append Three One = Zero
+  append Three Two = One
+  append Three Three = Two
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
