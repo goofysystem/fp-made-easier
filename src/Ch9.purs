@@ -69,6 +69,8 @@ verifyOrBoolMonoid = do
   log $ show $ mempty <> OTrue == OTrue <> mempty && OTrue <> mempty == OTrue
   log $ show $ mempty <> OFalse == OFalse <> mempty && OFalse <> mempty == OFalse
 
+data Mod4 = Zero | One | Two | Three
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
