@@ -8,6 +8,14 @@ import Effect.Console (log)
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 
+class Semigroup a where
+  append :: a -> a -> a -- Combines 2 a's and produces an a. This meets the magma requirement of being cloesed under the binary operator <>.
+
+infixr 5 append as <>
+
+class Semigroup a <= Monoid a where
+  mempty :: a
+
 data AndBool = AFalse | ATrue
 
 derive instance eqAndBool :: Eq AndBool
@@ -21,13 +29,6 @@ instance semigroupAndBool :: Semigroup AndBool where
   append _ AFalse = AFalse
   append AFalse _ = AFalse
 
-class Semigroup a where
-  append :: a -> a -> a -- Combines 2 a's and produces an a. This meets the magma requirement of being cloesed under the binary operator <>.
-
-infixr 5 append as <>
-
-class Semigroup a <= Monoid a where
-  mempty :: a
 
 test :: Effect Unit
 test = do
