@@ -16,6 +16,9 @@ infixr 5 append as <>
 class Semigroup a <= Monoid a where
   mempty :: a
 
+class Monoid a <= Group a where
+  ginverse :: a -> a
+
 data AndBool = AFalse | ATrue
 
 derive instance eqAndBool :: Eq AndBool
