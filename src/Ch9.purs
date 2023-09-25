@@ -7,6 +7,7 @@ import Effect.Console (log)
 
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
+import Data.Maybe (Maybe(..))
 
 class Semigroup a where
   append :: a -> a -> a -- Combines 2 a's and produces an a. This meets the magma requirement of being cloesed under the binary operator <>.
@@ -114,6 +115,15 @@ verifyMod4Monoid :: Effect Unit
 verifyMod4Monoid = do
   log "verifying Mod4 monoid laws (1)"
   log $ show $ mempty <> One == One <> mempty && One <> mempty == One
+
+newtype First a = First (Maybe a)
+
+instance semigroupFirst :: Semigroup (First a) where
+  append (First Nothing) last = last
+  append first _ = first
+
+instance monoidFirst :: Monoid (First a) where
+  mempty = First Nothing
 
 test :: Effect Unit
 test = do
