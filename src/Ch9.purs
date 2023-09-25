@@ -93,6 +93,12 @@ instance semigroupMod4 :: Semigroup Mod4 where
 instance monoidMod4 :: Monoid Mod4 where
   mempty = Zero
 
+instance groupMod4 :: Group Mod4 where
+  ginverse Zero = Zero
+  ginverse One = Three
+  ginverse Two = Two
+  ginverse Three = One
+
 test :: Effect Unit
 test = do
   log $ show $ ATrue <> ATrue
