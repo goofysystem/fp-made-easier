@@ -1,6 +1,6 @@
 module Ch11 where
 
-import Data.List (List(..), (:), foldl)
+import Data.List (List(..), (:), foldl, singleton)
 import Data.List.Types (NonEmptyList(..))
 import Data.Foldable (class Foldable)
 import Data.Maybe (Maybe(..))
@@ -8,7 +8,7 @@ import Data.NonEmpty (NonEmpty, (:|))
 import Data.Semiring (class Semiring, zero)
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+))
+import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+), (<>))
 
 reverse :: List ~> List
 reverse = foldl (\rl x -> x : rl) Nil
@@ -31,6 +31,12 @@ foldl1 f (x :| xs) = foldl f x xs
 sum :: ∀ a. Semiring a => List a -> a
 sum = foldl (+) zero
 
+data Tree a = Leaf a | Node (Tree a) (Tree a)
+
+toList :: ∀ a. Tree a -> List a
+toList (Leaf x) = singleton x
+toList (Node lt rt) = toList lt <> toList rt
+
 test :: Effect Unit
 test =
   do
@@ -42,3 +48,4 @@ test =
     log $ show $ findMaxNE (NonEmptyList $ 37 :| (311 : -1 : 2 : 84 : Nil))
     log $ show $ findMaxNE (NonEmptyList $ "a" :| ("bbb" : "c" : Nil))
     log $ show $ sum (1.0 : 2.0 : 3.0 : Nil)
+    log $ show $ toList (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
