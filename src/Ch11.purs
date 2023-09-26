@@ -1,14 +1,14 @@
 module Ch11 where
 
-import Data.List (List(..), (:), foldl, singleton)
+import Data.List (List(..), (:), singleton)
 import Data.List.Types (NonEmptyList(..))
-import Data.Foldable (class Foldable)
+import Data.Foldable (class Foldable, foldl, foldr, foldMap)
 import Data.Maybe (Maybe(..))
 import Data.NonEmpty (NonEmpty, (:|))
 import Data.Semiring (class Semiring, zero)
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+), (<>))
+import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+), (<>), (<<<))
 
 reverse :: List ~> List
 reverse = foldl (\rl x -> x : rl) Nil
@@ -28,10 +28,15 @@ findMaxNE (NonEmptyList ne) = foldl1 max ne
 foldl1 :: ∀ f a. Foldable f => (a -> a -> a) -> NonEmpty f a -> a
 foldl1 f (x :| xs) = foldl f x xs
 
-sum :: ∀ a. Semiring a => List a -> a
+sum :: ∀ f a. Foldable f => Semiring a => f a -> a
 sum = foldl (+) zero
 
 data Tree a = Leaf a | Node (Tree a) (Tree a)
+
+instance foldableTree :: Foldable Tree where
+  foldr f acc = foldr f acc <<< toList
+  foldl f acc = foldl f acc <<< toList
+  foldMap f = foldMap f <<< toList
 
 toList :: ∀ a. Tree a -> List a
 toList (Leaf x) = singleton x
@@ -49,3 +54,4 @@ test =
     log $ show $ findMaxNE (NonEmptyList $ "a" :| ("bbb" : "c" : Nil))
     log $ show $ sum (1.0 : 2.0 : 3.0 : Nil)
     log $ show $ toList (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
+    log $ show $ sum (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
