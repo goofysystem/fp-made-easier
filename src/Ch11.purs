@@ -1,6 +1,7 @@
 module Ch11 where
 
 import Data.List (List(..), (:), foldl)
+import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
 import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>))
@@ -13,14 +14,17 @@ max x y
   | x > y = x
   | otherwise = y
 
-findMax :: ∀ a. Ord a => a -> List a -> a
-findMax mx Nil = mx
-findMax mx (x : xs) = findMax (max x mx) xs
+findMax :: ∀ a. Ord a => List a -> Maybe a
+findMax Nil = Nothing
+findMax l@(first : _) = Just $ go first l
+  where
+  go mx Nil = mx
+  go mx (x : xs) = go (max x mx) xs
 
 test :: Effect Unit
 test = do
   log $ show $ reverse (10 : 20 : 30 : Nil)
   log $ show $ max (-1) 99
   log $ show $ max "aa" "z"
-  log $ show $ findMax 0 (37 : 311 : -1 : 2 : 84 : Nil)
-  log $ show $ findMax "" ("a" : "bbb" : "c" : Nil)
+  log $ show $ findMax (37 : 311 : -1 : 2 : 84 : Nil)
+  log $ show $ findMax ("a" : "bbb" : "c" : Nil)
