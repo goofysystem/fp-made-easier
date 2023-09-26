@@ -4,7 +4,7 @@ import Prelude
 
 import Effect (Effect)
 
-import Ch9 as Ch9
+import Ch11 as Ch11
 
 main :: Effect Unit
-main = Ch9.test
+main = Ch11.test
