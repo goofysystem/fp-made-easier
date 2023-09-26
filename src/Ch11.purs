@@ -7,7 +7,7 @@ import Data.Maybe (Maybe(..))
 import Data.NonEmpty (NonEmpty, (:|))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>))
+import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+))
 
 reverse :: List ~> List
 reverse = foldl (\rl x -> x : rl) Nil
@@ -26,6 +26,9 @@ findMaxNE (NonEmptyList ne) = foldl1 max ne
 
 foldl1 :: ∀ f a. Foldable f => (a -> a -> a) -> NonEmpty f a -> a
 foldl1 f (x :| xs) = foldl f x xs
+
+sum :: List Int -> Int
+sum = foldl (+) 0
 
 test :: Effect Unit
 test = do
