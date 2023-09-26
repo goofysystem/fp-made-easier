@@ -16,10 +16,7 @@ max x y
 
 findMax :: ∀ a. Ord a => List a -> Maybe a
 findMax Nil = Nothing
-findMax l@(first : _) = Just $ go first l
-  where
-  go mx Nil = mx
-  go mx (x : xs) = go (max x mx) xs
+findMax l@(first : _) = Just $ foldl max first l
 
 test :: Effect Unit
 test = do
