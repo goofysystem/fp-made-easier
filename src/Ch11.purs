@@ -5,6 +5,7 @@ import Data.List.Types (NonEmptyList(..))
 import Data.Foldable (class Foldable)
 import Data.Maybe (Maybe(..))
 import Data.NonEmpty (NonEmpty, (:|))
+import Data.Semiring (class Semiring, zero)
 import Effect (Effect)
 import Effect.Console (log)
 import Prelude (class Ord, Unit, show, negate, discard, otherwise, type (~>), ($), (>), (+))
@@ -27,15 +28,17 @@ findMaxNE (NonEmptyList ne) = foldl1 max ne
 foldl1 :: ∀ f a. Foldable f => (a -> a -> a) -> NonEmpty f a -> a
 foldl1 f (x :| xs) = foldl f x xs
 
-sum :: List Int -> Int
-sum = foldl (+) 0
+sum :: ∀ a. Semiring a => List a -> a
+sum = foldl (+) zero
 
 test :: Effect Unit
-test = do
-  log $ show $ reverse (10 : 20 : 30 : Nil)
-  log $ show $ max (-1) 99
-  log $ show $ max "aa" "z"
-  log $ show $ findMax (37 : 311 : -1 : 2 : 84 : Nil)
-  log $ show $ findMax ("a" : "bbb" : "c" : Nil)
-  log $ show $ findMaxNE (NonEmptyList $ 37 :| (311 : -1 : 2 : 84 : Nil))
-  log $ show $ findMaxNE (NonEmptyList $ "a" :| ("bbb" : "c" : Nil))
+test =
+  do
+    log $ show $ reverse (10 : 20 : 30 : Nil)
+    log $ show $ max (-1) 99
+    log $ show $ max "aa" "z"
+    log $ show $ findMax (37 : 311 : -1 : 2 : 84 : Nil)
+    log $ show $ findMax ("a" : "bbb" : "c" : Nil)
+    log $ show $ findMaxNE (NonEmptyList $ 37 :| (311 : -1 : 2 : 84 : Nil))
+    log $ show $ findMaxNE (NonEmptyList $ "a" :| ("bbb" : "c" : Nil))
+    log $ show $ sum (1.0 : 2.0 : 3.0 : Nil)
