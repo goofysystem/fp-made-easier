@@ -33,14 +33,29 @@ sum = foldl (+) zero
 
 data Tree a = Leaf a | Node (Tree a) (Tree a)
 
-instance foldableTree :: Foldable Tree where
+class ToList f where
+  toList :: ∀ a. f a -> List a
+
+newtype RightFirstTree a = RightFirstTree (Tree a)
+newtype LeftFirstTree a = LeftFirstTree (Tree a)
+
+instance toListRightFirstTree :: ToList RightFirstTree where
+  toList (RightFirstTree (Leaf x)) = singleton x
+  toList (RightFirstTree (Node lt rt)) = toList (RightFirstTree rt) <> toList (RightFirstTree lt)
+
+instance toListLeftFirstTree :: ToList LeftFirstTree where
+  toList (LeftFirstTree (Leaf x)) = singleton x
+  toList (LeftFirstTree (Node lt rt)) = toList (LeftFirstTree lt) <> toList (LeftFirstTree rt)
+
+instance foldableRightFirstTree :: Foldable RightFirstTree where
   foldr f acc = foldr f acc <<< toList
   foldl f acc = foldl f acc <<< toList
   foldMap f = foldMap f <<< toList
 
-toList :: ∀ a. Tree a -> List a
-toList (Leaf x) = singleton x
-toList (Node lt rt) = toList lt <> toList rt
+instance foldableLeftFirstTree :: Foldable LeftFirstTree where
+  foldr f acc = foldr f acc <<< toList
+  foldl f acc = foldl f acc <<< toList
+  foldMap f = foldMap f <<< toList
 
 test :: Effect Unit
 test =
@@ -53,5 +68,7 @@ test =
     log $ show $ findMaxNE (NonEmptyList $ 37 :| (311 : -1 : 2 : 84 : Nil))
     log $ show $ findMaxNE (NonEmptyList $ "a" :| ("bbb" : "c" : Nil))
     log $ show $ sum (1.0 : 2.0 : 3.0 : Nil)
-    log $ show $ toList (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
-    log $ show $ sum (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
+    log $ show $ toList $ LeftFirstTree (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
+    log $ show $ sum $ LeftFirstTree (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
+    log $ show $ toList $ RightFirstTree (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
+    log $ show $ sum $ RightFirstTree (Node (Node (Leaf 5) (Node (Leaf (-1)) (Leaf 14))) (Leaf 99))
