@@ -33,9 +33,20 @@ instance functorEither :: Functor (Either a) where
   map _ (Left err) = Left err
   map f (Right x) = Right $ f x
 
+data Tuple a b = Tuple a b
+
+derive instance genericTuple :: Generic (Tuple a b) _
+
+instance showTuple :: (Show a, Show b) => Show (Tuple a b) where
+  show = genericShow
+
+instance functorTuple :: Functor (Tuple a) where
+  map f (Tuple x y) = Tuple x $ f y
+
 test :: Effect Unit
 test = do
   log $ show $ (_ / 2) <$> Just 10
   log $ show $ (_ / 2) <$> Nothing
   log $ show $ (_ / 2) <$> (Right 10 :: Either Unit _)
   log $ show $ (_ / 2) <$> Left "error reason"
+  log $ show $ (_ / 2) <$> Tuple 10 20
