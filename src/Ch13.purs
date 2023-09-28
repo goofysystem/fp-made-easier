@@ -3,6 +3,7 @@ module Ch13 where
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 import Data.Eq (class Eq)
+import Data.String.Common (toUpper)
 import Effect (Effect)
 import Effect.Console (log)
 import Prelude (class Show, Unit, show, discard, identity, ($), (/), (<>), (==), (<<<), (*))
@@ -55,6 +56,19 @@ instance showThreeple :: (Show a, Show b, Show c) => Show (Threeple a b c) where
 instance functorThreeple :: Functor (Threeple a b) where
   map f (Threeple x y z) = Threeple x y $ f z
 
+class Bifunctor f where
+  bimap :: ∀ a b c d. (a -> c) -> (b -> d) -> f a b -> f c d
+
+rmap :: ∀ f a b c. Bifunctor f => (b -> c) -> f a b -> f a c
+rmap = bimap identity
+
+lmap :: ∀ f a b c. Bifunctor f => (a -> c) -> f a b -> f c b
+lmap f = bimap f identity
+
+instance bifunctorEither :: Bifunctor Either where
+  bimap f _ (Left err) = Left $ f err
+  bimap _ g (Right x) = Right $ g x
+
 test :: Effect Unit
 test = do
   log $ show $ (_ / 2) <$> Just 10
@@ -69,3 +83,7 @@ test = do
     f x = x * 3
   log $ show $ "Maybe Composition for Nothing: " <> show ((map (g <<< f) Nothing) == (map f <<< map g) Nothing)
   log $ show $ "Maybe Composition for Just: " <> show ((map (g <<< f) (Just 60)) == (map f <<< map g) (Just 60))
+  log $ show $ rmap (_ * 2) $ Left "error reason"
+  log $ show $ rmap (_ * 2) $ (Right 10 :: Either Unit _)
+  log $ show $ lmap toUpper $ (Left "error reason" :: Either _ Unit)
+  log $ show $ lmap toUpper $ Right 10
