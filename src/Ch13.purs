@@ -2,9 +2,10 @@ module Ch13 where
 
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
+import Data.Eq (class Eq)
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (class Show, Unit, show, discard, ($), (/))
+import Prelude (class Show, Unit, show, discard, identity, ($), (/), (<>), (==), (<<<), (*))
 
 data Maybe a = Nothing | Just a
 
@@ -19,6 +20,8 @@ class Functor f where
 instance functorMaybe :: Functor Maybe where
   map _ Nothing = Nothing
   map f (Just x) = Just $ f x
+
+derive instance eqMaybe :: Eq a => Eq (Maybe a)
 
 infixl 4 map as <$>
 
@@ -60,3 +63,9 @@ test = do
   log $ show $ (_ / 2) <$> Left "error reason"
   log $ show $ (_ / 2) <$> Tuple 10 20
   log $ show $ (_ / 2) <$> Threeple 10 20 20
+  log $ show $ "Maybe Identity for Nothing: " <> show ((identity <$> Nothing) == (Nothing :: Maybe Unit))
+  let
+    g x = x * 2
+    f x = x * 3
+  log $ show $ "Maybe Composition for Nothing: " <> show ((map (g <<< f) Nothing) == (map f <<< map g) Nothing)
+  log $ show $ "Maybe Composition for Just: " <> show ((map (g <<< f) (Just 60)) == (map f <<< map g) (Just 60))
