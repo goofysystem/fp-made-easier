@@ -18,11 +18,24 @@ class Functor f where
 
 instance functorMaybe :: Functor Maybe where
   map _ Nothing = Nothing
-  map f (Just x) = Just (f x)
+  map f (Just x) = Just $ f x
 
 infixl 4 map as <$>
+
+data Either a b = Left a | Right b
+
+derive instance genericEither :: Generic (Either a b) _
+
+instance showEither :: (Show a, Show b) => Show (Either a b) where
+  show = genericShow
+
+instance functorEither :: Functor (Either a) where
+  map _ (Left err) = Left err
+  map f (Right x) = Right $ f x
 
 test :: Effect Unit
 test = do
   log $ show $ (_ / 2) <$> Just 10
   log $ show $ (_ / 2) <$> Nothing
+  log $ show $ (_ / 2) <$> (Right 10 :: Either Unit _)
+  log $ show $ (_ / 2) <$> Left "error reason"
