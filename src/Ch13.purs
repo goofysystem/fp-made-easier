@@ -69,6 +69,9 @@ instance bifunctorEither :: Bifunctor Either where
   bimap f _ (Left err) = Left $ f err
   bimap _ g (Right x) = Right $ g x
 
+instance bifunctorTuple :: Bifunctor Tuple where
+  bimap f g (Tuple x y) = Tuple (f x) (g y)
+
 test :: Effect Unit
 test = do
   log $ show $ (_ / 2) <$> Just 10
@@ -87,3 +90,6 @@ test = do
   log $ show $ rmap (_ * 2) $ (Right 10 :: Either Unit _)
   log $ show $ lmap toUpper $ (Left "error reason" :: Either _ Unit)
   log $ show $ lmap toUpper $ Right 10
+  log $ show $ rmap (_ * 2) $ Tuple 80 40
+  log $ show $ lmap (_ / 2) $ Tuple 80 40
+  log $ show $ bimap (_ / 2) (_ * 2) $ Tuple 80 40
