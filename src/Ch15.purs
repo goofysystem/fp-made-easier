@@ -32,6 +32,9 @@ instance profunctorMoore :: Profunctor (Moore s) where
   dimap :: ∀ a b c d. (c -> a) -> (b -> d) -> Moore s a b -> Moore s c d
   dimap f g (Moore s0 output transition) = Moore s0 (g <<< output) (\s -> transition s <<< f)
 
+addr :: ∀ a. Semiring a => Moore a a a
+addr = Moore zero identity (+)
+
 test :: Effect Unit
 test = do
   log $ show $ odd 0
