@@ -5,6 +5,8 @@ import Prelude
 import Data.Int.Bits ((.&.))
 import Data.Functor.Contravariant (class Contravariant, cmap, (>$<))
 import Data.Profunctor (class Profunctor)
+import Data.Foldable (class Foldable, foldl)
+import Data.List (List(..), (:))
 
 import Effect (Effect)
 import Effect.Console (log)
@@ -35,6 +37,10 @@ instance profunctorMoore :: Profunctor (Moore s) where
 addr :: ∀ a. Semiring a => Moore a a a
 addr = Moore zero identity (+)
 
+runFoldL :: ∀ s a b f. Foldable f => Moore s a b -> f a -> b
+-- runFoldL (Moore s0 output transition) xs = output $ foldl transition s0 xs
+runFoldL (Moore s0 output transition) = output <<< foldl transition s0
+
 test :: Effect Unit
 test = do
   log $ show $ odd 0
@@ -47,3 +53,6 @@ test = do
   log $ show $ runPredicate (cmap (_ + 2) (Predicate odd)) 10
   log $ show $ runPredicate ((_ + 1) >$< (Predicate odd)) 10
   log $ show $ runPredicate ((_ + 2) >$< (Predicate odd)) 10
+  log "------------------------"
+  log $ show $ runFoldL addr [1, 2, 3]
+  log $ show $ runFoldL addr (1.0 : 2.0 : 3.0 : Nil)
