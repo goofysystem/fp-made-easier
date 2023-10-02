@@ -22,6 +22,7 @@ to generate this file without the comments in this block.
   , "newtype"
   , "nonempty"
   , "prelude"
+  , "profunctor"
   , "strings"
   , "tuples"
   ]

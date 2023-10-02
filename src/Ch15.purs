@@ -4,6 +4,7 @@ import Prelude
 
 import Data.Int.Bits ((.&.))
 import Data.Functor.Contravariant (class Contravariant, cmap, (>$<))
+import Data.Profunctor (class Profunctor)
 
 import Effect (Effect)
 import Effect.Console (log)
@@ -24,6 +25,12 @@ instance contravariantPredicate :: Contravariant Predicate where
 
 runPredicate :: ∀ a. Predicate a -> a -> Boolean
 runPredicate (Predicate f) x = f x
+
+data Moore s a b = Moore s (s -> b) (s -> a -> s)
+
+instance profunctorMoore :: Profunctor (Moore s) where
+  dimap :: ∀ a b c d. (c -> a) -> (b -> d) -> Moore s a b -> Moore s c d
+  dimap f g (Moore s0 output transition) = Moore s0 (g <<< output) (\s -> transition s <<< f)
 
 test :: Effect Unit
 test = do
