@@ -6,6 +6,7 @@ import Effect (Effect)
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 import Data.Bifunctor (class Bifunctor)
+import Data.Newtype (class Newtype)
 import Effect.Console (log)
 
 data Maybe a = Nothing | Just a
@@ -46,6 +47,27 @@ instance applyEither :: Apply (Either a) where
 
 instance applicativeEither :: Applicative (Either a) where
   pure = Right
+
+newtype Validation err result = Validation (Either err result)
+
+derive instance newtypeValidation :: Newtype (Validation err result) _
+derive newtype instance functorValidation :: Functor (Validation err)
+derive newtype instance bifunctorValidation :: Bifunctor Validation
+derive instance eqValidation :: (Eq err, Eq result) => Eq (Validation err result)
+derive instance ordValidation :: (Ord err, Ord result) => Ord (Validation err result)
+
+instance applyValidation :: Semigroup err => Apply (Validation err) where
+  apply (Validation (Left err1)) (Validation (Left err2)) = Validation $ Left (err1 <> err2)
+  apply (Validation (Left err1)) _ = Validation $ Left err1
+  apply (Validation (Right f)) x = f <$> x
+
+instance applicativeValidation :: Semigroup err => Applicative (Validation err) where
+  pure = Validation <<< Right
+
+derive instance genericValidation :: Generic (Validation err result) _
+
+instance showValidation :: (Show err, Show result) => Show (Validation err result) where
+  show = genericShow
 
 test :: Effect Unit
 test = do
