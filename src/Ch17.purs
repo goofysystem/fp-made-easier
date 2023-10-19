@@ -1,4 +1,12 @@
-module Ch17 where
+module Ch17
+  ( Age(..)
+  , Either(..)
+  , FamilyAges(..)
+  , FamilyAgesRow
+  , Validation(..)
+  , createFamilyAges
+  , test
+  ) where
 
 import Prelude
 
@@ -69,6 +77,52 @@ derive instance genericValidation :: Generic (Validation err result) _
 instance showValidation :: (Show err, Show result) => Show (Validation err result) where
   show = genericShow
 
+newtype Age = Age Int
+
+derive instance genericAge :: Generic Age _
+instance showAge :: Show Age where
+  show = genericShow
+
+newtype FullName = FullName String
+
+derive instance genericFullName :: Generic FullName _
+instance showFullName :: Show FullName where
+  show = genericShow
+
+type FamilyAgesRow r = (fatherAge :: Age, motherAge :: Age, childAge :: Age | r)
+type FamilyNamesRow r = (fatherName :: FullName, motherName :: FullName, childName :: FullName | r)
+
+newtype FamilyAges = FamilyAges { | FamilyAgesRow () }
+
+derive instance genericFamilyAges :: Generic FamilyAges _
+
+instance showFamilyAges :: Show FamilyAges where
+  show = genericShow
+
+newtype Family = Family { | FamilyNamesRow (FamilyAgesRow ()) }
+
+derive instance genericFamily :: Generic Family _
+instance showFamily :: Show Family where
+  show = genericShow
+
+newtype UpperAge = UpperAge Int
+newtype LowerAge = LowerAge Int
+
+validateAge :: LowerAge -> UpperAge -> Age -> String -> Validation (Array String) Age
+validateAge (LowerAge lower) (UpperAge upper) (Age age) who
+  | age > upper = Validation $ Left [ who <> " is too old" ]
+  | age < lower = Validation $ Left [ who <> " is too young" ]
+  | otherwise = Validation $ Right $ Age age
+
+createFamilyAges :: { | FamilyAgesRow () } -> Validation (Array String) FamilyAges
+createFamilyAges { fatherAge, motherAge, childAge } =
+  FamilyAges <$>
+    ( { fatherAge: _, motherAge: _, childAge: _ }
+        <$> (validateAge (LowerAge 18) (UpperAge 100) fatherAge "Father")
+        <*> (validateAge (LowerAge 18) (UpperAge 100) motherAge "Mother")
+        <*> (validateAge (LowerAge 1) (UpperAge 18) childAge "Child")
+    )
+
 test :: Effect Unit
 test = do
   log $ show $ (+) <$> Just 21 <*> Just 21
@@ -89,3 +143,13 @@ test = do
   -- LAW: Interchange
   -- u <*> pure x = pure (_ $ x) <*> u
   log $ show $ (pure negate <*> pure 1) == (pure (_ $ 1) <*> pure negate :: Either Unit Int)
+  log $ show $ createFamilyAges
+    { fatherAge: Age 40, motherAge: Age 30, childAge: Age 10 }
+  log $ show $ createFamilyAges
+    { fatherAge: Age 400, motherAge: Age 300, childAge: Age 0 }
+  log $ show $ createFamilyAges
+    { fatherAge: Age 4, motherAge: Age 3, childAge: Age 10 }
+  log $ show $ createFamilyAges
+    { fatherAge: Age 40, motherAge: Age 30, childAge: Age 100 }
+  log $ show $ createFamilyAges
+    { fatherAge: Age 40, motherAge: Age 3, childAge: Age 0 }
