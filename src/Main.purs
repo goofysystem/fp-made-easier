@@ -4,7 +4,7 @@ import Prelude
 
 import Effect (Effect)
 
-import Ch17 as Ch17
+import Parser as P
 
 main :: Effect Unit
-main = Ch17.test
+main = P.test
